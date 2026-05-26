@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import leadsRoutes from "./routes/leads.routes";
 import cotizacionesRoutes from "./routes/cotizaciones.routes";
+import authRoutes from "./routes/auth.routes";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
@@ -31,6 +32,7 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/leads", leadsRoutes);
 app.use("/api/cotizaciones", cotizacionesRoutes);
 

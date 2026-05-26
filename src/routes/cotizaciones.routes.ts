@@ -4,11 +4,12 @@ import {
   getCotizaciones,
   updateEstado,
 } from "../controllers/cotizaciones.controller";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
 router.post("/", createCotizacion);
-router.get("/", getCotizaciones);
-router.patch("/:id/estado", updateEstado);
+router.get("/", requireAuth, getCotizaciones);
+router.patch("/:id/estado", requireAuth, updateEstado);
 
 export default router;
