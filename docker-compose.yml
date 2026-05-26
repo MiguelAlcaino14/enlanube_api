@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  api:
+    image: siroe/enlanube-api:latest
+    container_name: enlanube-api
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - traefik_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_default"
+
+      # HTTPS
+      - traefik.http.routers.enlanube-api.rule=Host("api.enlanube.cl")
+      - "traefik.http.routers.enlanube-api.entrypoints=websecure"
+      - "traefik.http.routers.enlanube-api.tls=true"
+      - "traefik.http.routers.enlanube-api.tls.certresolver=le"
+
+      # HTTP → HTTPS
+      - traefik.http.routers.enlanube-api-http.rule=Host("api.enlanube.cl")
+      - "traefik.http.routers.enlanube-api-http.entrypoints=web"
+      - "traefik.http.routers.enlanube-api-http.middlewares=redirect-https"
+
+      - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
+
+      # Puerto
+      - "traefik.http.services.enlanube-api.loadbalancer.server.port=3000"
+
+networks:
+  traefik_default:
+    external: true
