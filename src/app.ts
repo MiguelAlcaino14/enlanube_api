@@ -9,7 +9,21 @@ import { errorHandler } from "./middleware/errorHandler";
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || "*" }));
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(",").map((o) => o.trim())
+  : [];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origen no permitido — ${origin}`));
+      }
+    },
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 

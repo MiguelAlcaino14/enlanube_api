@@ -1,11 +1,18 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function createLead(req: Request, res: Response) {
   const { nombre, email, telefono, empresa, mensaje, servicio } = req.body;
 
   if (!nombre || !email) {
     res.status(400).json({ error: "nombre y email son requeridos" });
+    return;
+  }
+
+  if (!EMAIL_RE.test(email)) {
+    res.status(400).json({ error: "email inválido" });
     return;
   }
 
